@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.widget.TextView;
 
 import com.arcsoft.v4l2cameradisplay.databinding.ActivityMainBinding;
+import com.arcsoft.v4l2cameradisplay.gles.DisplaySurfaceView;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -15,6 +16,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private ActivityMainBinding binding;
+    private DisplaySurfaceView mDisplaySurfaceView;
+    private ProcessThread mProcessThread;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,15 +25,10 @@ public class MainActivity extends AppCompatActivity {
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-
-        // Example of a call to a native method
-        TextView tv = binding.sampleText;
-        tv.setText(stringFromJNI());
+        mDisplaySurfaceView = findViewById(R.id.surfaceView);
+        mProcessThread = new ProcessThread(mDisplaySurfaceView);
+        if (true == mProcessThread.init()) {
+            mProcessThread.start();
+        }
     }
-
-    /**
-     * A native method that is implemented by the 'v4l2cameradisplay' native library,
-     * which is packaged with this application.
-     */
-    public native String stringFromJNI();
 }
